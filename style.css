@@ -102,6 +102,7 @@ body {
   width: 100%;
   max-width: 960px;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   padding: 8px 16px 18px 16px;
@@ -481,10 +482,17 @@ header {
   box-shadow: 0 18px 45px rgba(36, 54, 18, 0.45);
   border: 4px solid var(--border-focus);
   background: var(--bg-canvas);
+  touch-action: none;
+  max-width: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #gameCanvas {
   display: block;
+  touch-action: none;
+  max-width: 100%;
 }
 
 /* AI Telemetry HUD */
@@ -569,18 +577,23 @@ header {
 
 /* Modals */
 .modal-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   background: var(--modal-backdrop);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 50;
+  z-index: 1000;
   padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-overlay.hidden {
@@ -594,6 +607,11 @@ header {
   padding: 22px 26px;
   width: 100%;
   max-width: 440px;
+  max-height: calc(100dvh - 32px);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: auto;
   text-align: center;
   box-shadow: 0 20px 60px var(--shadow-main);
   animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -838,21 +856,26 @@ header {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
-/* Mobile D-Pad */
+/* Mobile Controls & Virtual D-Pad */
 #mobile-controls {
   display: none;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
-  touch-action: manipulation;
-  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+  margin-top: 8px;
+  padding: 0 12px;
+  touch-action: none;
 }
 
 .dpad-container {
   display: grid;
-  grid-template-columns: repeat(3, 52px);
-  grid-template-rows: repeat(3, 52px);
-  gap: 5px;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 4px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .dpad-btn {
@@ -860,74 +883,288 @@ header {
   border: 2px solid var(--border-focus);
   border-radius: 12px;
   color: #b45309;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  box-shadow: 0 4px 12px var(--shadow-main);
+  box-shadow: 0 3px 8px var(--shadow-main);
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s ease, transform 0.1s ease;
 }
 
-.dpad-btn:active {
-  background: rgba(245, 158, 11, 0.35);
+.dpad-btn:active, .dpad-btn.active-touch {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #451a03;
   transform: scale(0.92);
+  box-shadow: 0 1px 3px var(--shadow-main);
 }
 
 #dpad-up { grid-column: 2; grid-row: 1; }
 #dpad-left { grid-column: 1; grid-row: 2; }
-#dpad-center { grid-column: 2; grid-row: 2; background: transparent; border: none; }
+#dpad-center {
+  grid-column: 2;
+  grid-row: 2;
+  background: rgba(180, 83, 9, 0.15);
+  border-radius: 50%;
+  margin: 7px;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+  pointer-events: none;
+}
 #dpad-right { grid-column: 3; grid-row: 2; }
 #dpad-down { grid-column: 2; grid-row: 3; }
 
 .mobile-emp-btn {
-  width: 64px;
-  height: 64px;
+  width: 62px;
+  height: 62px;
   border-radius: 50%;
   background: linear-gradient(135deg, #f97316, #ea580c);
   color: #ffffff;
   border: 3px solid #c2410c;
   font-weight: 900;
-  font-size: 0.85rem;
-  box-shadow: 0 0 18px rgba(234, 88, 12, 0.6);
+  font-size: 0.82rem;
+  box-shadow: 0 0 16px rgba(234, 88, 12, 0.6);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  touch-action: manipulation;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, filter 0.2s ease, opacity 0.2s ease;
 }
 
 .mobile-emp-btn:active {
-  transform: scale(0.9);
+  transform: scale(0.88);
 }
 
-/* Media Queries */
-@media (max-width: 768px) {
-  #game-container {
-    padding: 6px 10px;
-  }
-  .hud-bar {
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, auto);
-    padding: 6px 8px;
-    gap: 4px;
+.mobile-emp-btn:disabled {
+  opacity: 0.45;
+  filter: grayscale(0.8);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Media Queries for Responsive Mobile Screens */
+@media (max-width: 768px), (pointer: coarse) {
+  #mobile-controls {
+    display: flex;
   }
   .btn-text {
     display: none;
   }
-  #ai-hud {
-    width: 180px;
-    font-size: 0.68rem;
-    padding: 8px 10px;
-  }
-  #mobile-controls {
-    display: flex;
+}
+
+@media (max-width: 680px), (pointer: coarse) {
+  .game-footer {
+    display: none !important;
   }
 }
 
-@media (pointer: coarse) {
+@media (max-width: 600px) {
+  #game-container {
+    padding: 4px 8px 8px 8px;
+    min-height: 100dvh;
+  }
+  header {
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .top-bar {
+    gap: 4px;
+  }
+  .brand-logo-img {
+    height: 28px;
+    max-width: 140px;
+  }
+  .badge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+  .header-actions {
+    gap: 4px;
+  }
+  .btn-icon {
+    padding: 4px 7px;
+    font-size: 0.75rem;
+    border-radius: 9px;
+    gap: 3px;
+  }
+  .hud-bar {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
+    padding: 4px 8px;
+    gap: 2px 6px;
+    border-radius: 12px;
+  }
+  .hud-item {
+    padding: 1px 0;
+  }
+  .hud-label {
+    font-size: 0.58rem;
+    margin-bottom: 1px;
+    letter-spacing: 0.3px;
+  }
+  .hud-value {
+    font-size: 0.95rem;
+  }
+  .life-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .key-item-svg {
+    width: 20px;
+    height: 20px;
+  }
+  .emp-hud-btn {
+    padding: 2px 6px;
+    font-size: 0.72rem;
+  }
+  .timer-bar-wrapper {
+    height: 5px;
+  }
+  .level-selector-nav {
+    padding: 3px 6px;
+    gap: 3px;
+    border-radius: 10px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .level-nav-label {
+    font-size: 0.62rem;
+    white-space: nowrap;
+  }
+  .level-pills-container {
+    gap: 3px;
+    flex-wrap: nowrap;
+  }
+  .level-pill {
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  #canvas-wrapper {
+    border-radius: 16px;
+    border: 3px solid var(--border-focus);
+  }
+  #ai-hud {
+    width: 150px;
+    font-size: 0.65rem;
+    padding: 6px 8px;
+    top: 6px;
+    right: 6px;
+  }
+  .modal-overlay {
+    padding: 10px;
+  }
+  .modal-card {
+    padding: 16px 18px;
+    border-radius: 18px;
+    max-height: 88vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .modal-logo-img {
+    max-height: 48px;
+    max-width: 160px;
+    margin-bottom: 6px;
+  }
+  .modal-card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 4px;
+  }
+  .modal-subtitle {
+    font-size: 0.78rem;
+    margin-bottom: 10px;
+  }
+  .rules-list {
+    padding: 8px 10px;
+    gap: 5px;
+    font-size: 0.74rem;
+    margin-bottom: 12px;
+  }
+  .btn-primary {
+    padding: 11px 16px;
+    font-size: 0.95rem;
+    border-radius: 14px;
+  }
+  .btn-secondary {
+    padding: 9px 14px;
+    font-size: 0.85rem;
+    border-radius: 12px;
+  }
+  .brag-card {
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+  .btn-kbd {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .dpad-container {
+    grid-template-columns: repeat(3, 38px);
+    grid-template-rows: repeat(3, 38px);
+  }
+  .mobile-emp-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  #game-container {
+    padding: 2px 8px 4px 8px;
+    justify-content: flex-start;
+  }
+  header {
+    margin-bottom: 2px;
+    gap: 2px;
+  }
+  .top-bar {
+    gap: 4px;
+  }
+  .brand-logo-img {
+    height: 22px;
+  }
+  .hud-bar {
+    padding: 2px 6px;
+    gap: 2px 6px;
+  }
+  .level-selector-nav {
+    display: none;
+  }
+  .main-stage {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
   #mobile-controls {
-    display: flex;
+    flex-direction: column;
+    width: auto;
+    margin-top: 0;
+    gap: 8px;
+  }
+  .dpad-container {
+    grid-template-columns: repeat(3, 36px);
+    grid-template-rows: repeat(3, 36px);
+    gap: 3px;
+  }
+  .mobile-emp-btn {
+    width: 50px;
+    height: 50px;
   }
 }

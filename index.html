@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Tom &amp; Jerry: Cheese Chase - Cartoon Garden Maze</title>
   <meta name="description" content="Help Jerry the mouse collect all 3 delicious Swiss cheese wedges and scurry into the cozy mouse hole before Tom the cat catches you! 10 progressive garden hedge maze levels.">
   <meta name="theme-color" content="#8da93c">
@@ -151,97 +151,6 @@
             <span id="ai-score-val" class="ai-stat-val">0</span>
           </div>
         </aside>
-
-        <!-- Start Screen Modal -->
-        <div id="start-modal" class="modal-overlay">
-          <div class="modal-card">
-            <img src="assets/logo.svg" alt="Tom &amp; Jerry Logo" class="modal-logo-img">
-            <h2>TOM &amp; JERRY: CHEESE CHASE</h2>
-            <p class="modal-subtitle">Jerry is on the prowl for Swiss cheese! Collect all 3 golden cheese wedges and scurry into the cozy mouse hole before Tom catches you!</p>
-            <div class="rules-list">
-              <div class="rule-item">
-                <span class="rule-emoji">🧀</span>
-                <span><strong>Snatch 3 Cheeses</strong>: Gather every delicious Swiss cheese wedge hidden across the garden trail.</span>
-              </div>
-              <div class="rule-item">
-                <span class="rule-emoji">🚪</span>
-                <span><strong>Mouse Hole Escape</strong>: The cozy arched burrow unlocks as soon as all 3 cheeses are in Jerry's paws!</span>
-              </div>
-              <div class="rule-item">
-                <span class="rule-emoji">🐱</span>
-                <span><strong>Tom is Hunting</strong>: Tom uses tactical AI to chase, intercept, and corner you. Keep moving!</span>
-              </div>
-              <div class="rule-item">
-                <span class="rule-emoji">💥</span>
-                <span><strong>Stun Trap [Spacebar]</strong>: Drop a comical spring trap to freeze Tom with spinning dizzy stars for 3.5s!</span>
-              </div>
-            </div>
-            <button id="btn-start" class="btn-primary">PLAY LEVEL 1 <kbd class="btn-kbd">ENTER ↵</kbd></button>
-          </div>
-        </div>
-
-        <!-- Pause Modal -->
-        <div id="pause-modal" class="modal-overlay hidden">
-          <div class="modal-card">
-            <h2>GAME PAUSED</h2>
-            <p class="modal-subtitle">Take a breather! Clock and Tom are frozen.</p>
-            <button id="btn-resume" class="btn-primary">RESUME <kbd class="btn-kbd">ENTER ↵</kbd></button>
-            <button id="btn-restart-pause" class="btn-secondary">RESTART LEVEL</button>
-          </div>
-        </div>
-
-        <!-- Game Over Modal -->
-        <div id="game-over-modal" class="modal-overlay hidden">
-          <div class="modal-card">
-            <h2 style="color: var(--accent-red);">TOM CAUGHT JERRY!</h2>
-            <p id="loss-reason" class="modal-subtitle">Tom snatched the cheese! Don't let him get away with it!</p>
-            <div class="brag-card">
-              <div class="score-row">
-                <span>Level Attempted:</span>
-                <span id="level-loss-text" class="score-val">Level 1</span>
-              </div>
-              <div class="score-row">
-                <span>Cheese Found:</span>
-                <span id="keys-found-loss" class="score-val">0 / 3</span>
-              </div>
-              <div class="score-row total">
-                <span>FINAL SCORE</span>
-                <span id="final-score-loss" class="score-val">0</span>
-              </div>
-            </div>
-            <button id="btn-restart-loss" class="btn-primary">RETRY LEVEL <kbd class="btn-kbd">ENTER / R ↵</kbd></button>
-          </div>
-        </div>
-
-        <!-- Victory Modal with Survival Brag Card -->
-        <div id="victory-modal" class="modal-overlay hidden">
-          <div class="modal-card">
-            <h2 style="color: var(--accent-green);">CHEESE HEIST SUCCESSFUL!</h2>
-            <p class="modal-subtitle">Jerry grabbed all the Swiss cheese and scurried safely into the mouse hole!</p>
-            
-            <div class="brag-card">
-              <div class="rank-display">
-                <span class="rank-title">PERFORMANCE RANK</span>
-                <span id="rank-badge-val" class="rank-badge">S+ CHEESE MASTER</span>
-              </div>
-              <div class="score-row">
-                <span>Time Remaining:</span>
-                <span id="time-bonus-win" class="score-val">+0</span>
-              </div>
-              <div class="score-row">
-                <span>Jerry Lives Kept:</span>
-                <span id="lives-bonus-win" class="score-val">+0</span>
-              </div>
-              <div class="score-row total">
-                <span>TOTAL SCORE</span>
-                <span id="final-score-win" class="score-val">0</span>
-              </div>
-            </div>
-
-            <button id="btn-share-card" class="btn-primary btn-share">📋 COPY BRAG CARD</button>
-            <button id="btn-next-level" class="btn-primary" style="margin-top: 8px;">NEXT LEVEL <kbd class="btn-kbd">ENTER / N ↵</kbd></button>
-          </div>
-        </div>
       </div>
 
       <!-- Virtual D-Pad for Mobile -->
@@ -287,6 +196,98 @@
         </div>
       </footer>
     </main>
+  </div>
+
+  <!-- Game Modals (Full-Screen Overlay Dialogs) -->
+  <!-- Start Screen Modal -->
+  <div id="start-modal" class="modal-overlay">
+    <div class="modal-card">
+      <img src="assets/logo.svg" alt="Tom &amp; Jerry Logo" class="modal-logo-img">
+      <h2>TOM &amp; JERRY: CHEESE CHASE</h2>
+      <p class="modal-subtitle">Jerry is on the prowl for Swiss cheese! Collect all 3 golden cheese wedges and scurry into the cozy mouse hole before Tom catches you!</p>
+      <div class="rules-list">
+        <div class="rule-item">
+          <span class="rule-emoji">🧀</span>
+          <span><strong>Snatch 3 Cheeses</strong>: Gather every Swiss cheese wedge along the hedge trails.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-emoji">🚪</span>
+          <span><strong>Mouse Hole Escape</strong>: Burrow unlocks once Jerry has all 3 golden cheeses!</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-emoji">🐱</span>
+          <span><strong>Tom AI Hunter</strong>: Tom uses tactical A* to intercept and corner you. Keep moving!</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-emoji">💥</span>
+          <span><strong>Stun Trap</strong>: Tap TRAP / Spacebar to freeze Tom with spinning stars for 3.5s!</span>
+        </div>
+      </div>
+      <button id="btn-start" class="btn-primary">PLAY LEVEL 1 <kbd class="btn-kbd">ENTER ↵</kbd></button>
+    </div>
+  </div>
+
+  <!-- Pause Modal -->
+  <div id="pause-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2>GAME PAUSED</h2>
+      <p class="modal-subtitle">Take a breather! Clock and Tom are frozen.</p>
+      <button id="btn-resume" class="btn-primary">RESUME <kbd class="btn-kbd">ENTER ↵</kbd></button>
+      <button id="btn-restart-pause" class="btn-secondary">RESTART LEVEL</button>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div id="game-over-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2 style="color: var(--accent-red);">TOM CAUGHT JERRY!</h2>
+      <p id="loss-reason" class="modal-subtitle">Tom snatched the cheese! Don't let him get away with it!</p>
+      <div class="brag-card">
+        <div class="score-row">
+          <span>Level Attempted:</span>
+          <span id="level-loss-text" class="score-val">Level 1</span>
+        </div>
+        <div class="score-row">
+          <span>Cheese Found:</span>
+          <span id="keys-found-loss" class="score-val">0 / 3</span>
+        </div>
+        <div class="score-row total">
+          <span>FINAL SCORE</span>
+          <span id="final-score-loss" class="score-val">0</span>
+        </div>
+      </div>
+      <button id="btn-restart-loss" class="btn-primary">RETRY LEVEL <kbd class="btn-kbd">ENTER / R ↵</kbd></button>
+    </div>
+  </div>
+
+  <!-- Victory Modal with Survival Brag Card -->
+  <div id="victory-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <h2 style="color: var(--accent-green);">CHEESE HEIST SUCCESSFUL!</h2>
+      <p class="modal-subtitle">Jerry grabbed all the Swiss cheese and scurried safely into the mouse hole!</p>
+      
+      <div class="brag-card">
+        <div class="rank-display">
+          <span class="rank-title">PERFORMANCE RANK</span>
+          <span id="rank-badge-val" class="rank-badge">S+ CHEESE MASTER</span>
+        </div>
+        <div class="score-row">
+          <span>Time Remaining:</span>
+          <span id="time-bonus-win" class="score-val">+0</span>
+        </div>
+        <div class="score-row">
+          <span>Jerry Lives Kept:</span>
+          <span id="lives-bonus-win" class="score-val">+0</span>
+        </div>
+        <div class="score-row total">
+          <span>TOTAL SCORE</span>
+          <span id="final-score-win" class="score-val">0</span>
+        </div>
+      </div>
+
+      <button id="btn-share-card" class="btn-primary btn-share">📋 COPY BRAG CARD</button>
+      <button id="btn-next-level" class="btn-primary" style="margin-top: 8px;">NEXT LEVEL <kbd class="btn-kbd">ENTER / N ↵</kbd></button>
+    </div>
   </div>
 
   <!-- Game Scripts -->

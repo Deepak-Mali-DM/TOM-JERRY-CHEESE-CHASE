@@ -120,7 +120,16 @@ export class GameEngine {
     this.renderLevelSelector();
     this.initInputs();
     this.resizeCanvas();
-    window.addEventListener('resize', () => this.resizeCanvas());
+    window.addEventListener('resize', () => {
+      this.resizeCanvas();
+      this.render();
+    });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        this.resizeCanvas();
+        this.render();
+      }, 150);
+    });
 
     setTimeout(() => {
       if (this.dom.btnStart) this.dom.btnStart.focus();
@@ -248,6 +257,11 @@ export class GameEngine {
     this.dom.btnEmpHud.addEventListener('click', triggerEMP);
     if (this.dom.btnEmpMobile) {
       this.dom.btnEmpMobile.addEventListener('click', triggerEMP);
+      this.dom.btnEmpMobile.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        triggerEMP();
+        if (navigator.vibrate) navigator.vibrate(20);
+      }, { passive: false });
     }
 
     this.dom.btnStart.addEventListener('click', () => {
@@ -523,13 +537,14 @@ export class GameEngine {
       }
     });
 
-    // Touch D-Pad
+    // 1. Touch D-Pad Individual Button Listeners
     const setupTouchBtn = (btn, dirName) => {
       if (!btn) return;
       const activate = (e) => {
         e.preventDefault();
         this.touchDir = dirName;
         this.onDirectionInput(dirName);
+        if (navigator.vibrate) navigator.vibrate(10);
       };
       const deactivate = (e) => {
         e.preventDefault();
@@ -546,6 +561,137 @@ export class GameEngine {
     setupTouchBtn(this.dom.dpadDown, 'down');
     setupTouchBtn(this.dom.dpadLeft, 'left');
     setupTouchBtn(this.dom.dpadRight, 'right');
+
+    // 2. Rolling Thumb Gestures across D-Pad Container (Arcade Thumb Slide)
+    const dpadContainer = document.querySelector('.dpad-container');
+    if (dpadContainer) {
+      let currentActiveBtn = null;
+
+      const handleDpadMove = (touch) => {
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        const btn = targetEl ? targetEl.closest('.dpad-btn') : null;
+        if (btn && btn !== currentActiveBtn) {
+          if (currentActiveBtn) currentActiveBtn.classList.remove('active-touch');
+          currentActiveBtn = btn;
+          currentActiveBtn.classList.add('active-touch');
+
+          let dir = null;
+          if (btn.id === 'dpad-up') dir = 'up';
+          else if (btn.id === 'dpad-down') dir = 'down';
+          else if (btn.id === 'dpad-left') dir = 'left';
+          else if (btn.id === 'dpad-right') dir = 'right';
+
+          if (dir) {
+            this.touchDir = dir;
+            this.onDirectionInput(dir);
+            if (navigator.vibrate) navigator.vibrate(12);
+          }
+        } else if (!btn && currentActiveBtn) {
+          currentActiveBtn.classList.remove('active-touch');
+          currentActiveBtn = null;
+          this.touchDir = null;
+        }
+      };
+
+      dpadContainer.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (e.touches && e.touches.length > 0) handleDpadMove(e.touches[0]);
+      }, { passive: false });
+
+      dpadContainer.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches && e.touches.length > 0) handleDpadMove(e.touches[0]);
+      }, { passive: false });
+
+      const clearDpad = (e) => {
+        e.preventDefault();
+        if (currentActiveBtn) {
+          currentActiveBtn.classList.remove('active-touch');
+          currentActiveBtn = null;
+        }
+        this.touchDir = null;
+      };
+
+      dpadContainer.addEventListener('touchend', clearDpad, { passive: false });
+      dpadContainer.addEventListener('touchcancel', clearDpad, { passive: false });
+    }
+
+    // 3. Direct Touch Gestures on Canvas (Swipe & Continuous Drag Steering)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isTouchingCanvas = false;
+
+    this.canvas.addEventListener('touchstart', (e) => {
+      // Tap on canvas to advance if in menu, pause, or end game screens
+      if (this.state !== 'PLAYING') {
+        if (this.state === 'MENU') {
+          sound.playButtonClick();
+          this.startNewGame(1);
+          return;
+        } else if (this.state === 'GAMEOVER') {
+          sound.playButtonClick();
+          this.startNewGame(this.level);
+          return;
+        } else if (this.state === 'VICTORY') {
+          sound.playButtonClick();
+          const nextLvl = this.level >= 10 ? 1 : this.level + 1;
+          this.startNewGame(nextLvl);
+          return;
+        } else if (this.state === 'PAUSED') {
+          sound.playButtonClick();
+          this.togglePause();
+          return;
+        }
+      }
+
+      if (e.touches && e.touches.length > 0) {
+        e.preventDefault();
+        isTouchingCanvas = true;
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+      }
+    }, { passive: false });
+
+    this.canvas.addEventListener('touchmove', (e) => {
+      if (!isTouchingCanvas || this.state !== 'PLAYING') return;
+      if (e.touches && e.touches.length > 0) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+        const distSq = dx * dx + dy * dy;
+
+        // Snappy 12px threshold for quick direction shifts
+        if (distSq >= 144) {
+          let dir = null;
+          if (Math.abs(dx) > Math.abs(dy)) {
+            dir = dx > 0 ? 'right' : 'left';
+          } else {
+            dir = dy > 0 ? 'down' : 'up';
+          }
+
+          if (dir) {
+            this.touchDir = dir;
+            this.onDirectionInput(dir);
+            if (navigator.vibrate) navigator.vibrate(10);
+            // Reset origin so player can continuously drag around corners without lifting thumb!
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+          }
+        }
+      }
+    }, { passive: false });
+
+    const endCanvasTouch = (e) => {
+      if (isTouchingCanvas) {
+        isTouchingCanvas = false;
+        this.touchDir = null;
+      }
+    };
+
+    this.canvas.addEventListener('touchend', endCanvasTouch, { passive: false });
+    this.canvas.addEventListener('touchcancel', endCanvasTouch, { passive: false });
   }
 
   dirNameToCoords(dirName) {
@@ -674,18 +820,42 @@ export class GameEngine {
     const container = document.getElementById('canvas-wrapper');
     if (!container) return;
 
-    // Dynamically calculate available space to eliminate empty void
+    // Dynamically calculate available space to eliminate empty void and prevent mobile overflow
     const header = document.querySelector('header');
     const footer = document.querySelector('.game-footer');
-    const headerH = header ? header.offsetHeight : 120;
-    const footerH = footer ? footer.offsetHeight : 50;
+    const mobileControls = document.getElementById('mobile-controls');
 
-    const availableW = window.innerWidth - 36;
-    const availableH = window.innerHeight - headerH - footerH - 40;
-    const minDim = Math.max(340, Math.min(availableW, availableH, 680));
+    const headerH = header ? header.offsetHeight : 110;
+
+    // Check footer visibility (hidden on mobile screens to save screen height)
+    let footerH = 0;
+    if (footer && window.getComputedStyle(footer).display !== 'none') {
+      footerH = footer.offsetHeight;
+    }
+
+    // Check mobile controls visibility and calculate height
+    let mobileH = 0;
+    if (mobileControls && window.getComputedStyle(mobileControls).display !== 'none') {
+      mobileH = mobileControls.offsetHeight || 135;
+    }
+
+    // Available width accounting for side padding & canvas borders
+    const horizPadding = window.innerWidth <= 480 ? 16 : (window.innerWidth <= 768 ? 24 : 36);
+    const availableW = window.innerWidth - horizPadding;
+
+    // Available height accounting for vertical margins and spacing
+    const vertPadding = window.innerWidth <= 480 ? 14 : 28;
+    const availableH = window.innerHeight - headerH - footerH - mobileH - vertPadding;
+
+    // Minimum size 240px (fits small phones and split views), capped at 680px for desktop
+    const minDim = Math.max(240, Math.floor(Math.min(availableW, availableH, 680)));
 
     this.canvas.width = minDim;
     this.canvas.height = minDim;
+    this.canvas.style.width = `${minDim}px`;
+    this.canvas.style.height = `${minDim}px`;
+    container.style.width = `${minDim}px`;
+    container.style.height = `${minDim}px`;
 
     if (this.maze) {
       this.cellSize = minDim / Math.max(this.cols, this.rows);
