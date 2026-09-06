@@ -1,50 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
     <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.25"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.3"/>
     </filter>
+    <linearGradient id="jerry-fur" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ab6b38"/>
+      <stop offset="100%" stop-color="#8d5524"/>
+    </linearGradient>
+    <linearGradient id="jerry-belly" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fae2c8"/>
+      <stop offset="100%" stop-color="#f5cf9e"/>
+    </linearGradient>
   </defs>
 
   <!-- Group with shadow -->
   <g filter="url(#soft-shadow)">
-    <!-- Left Ear Outer -->
-    <circle cx="28" cy="28" r="21" fill="#757575" stroke="#262626" stroke-width="4"/>
-    <!-- Left Ear Inner Pink -->
-    <circle cx="28" cy="28" r="14" fill="#fca5a5"/>
+    <!-- Left Ear Outer (Brown with dark rim) -->
+    <circle cx="27" cy="27" r="22" fill="url(#jerry-fur)" stroke="#3d1e08" stroke-width="3.5"/>
+    <!-- Left Ear Inner (Cartoon Peach-Pink) -->
+    <circle cx="27" cy="27" r="14" fill="#fca5a5" stroke="#f87171" stroke-width="1.5"/>
 
-    <!-- Right Ear Outer -->
-    <circle cx="72" cy="28" r="21" fill="#757575" stroke="#262626" stroke-width="4"/>
-    <!-- Right Ear Inner Pink -->
-    <circle cx="72" cy="28" r="14" fill="#fca5a5"/>
+    <!-- Right Ear Outer (Brown with dark rim) -->
+    <circle cx="73" cy="27" r="22" fill="url(#jerry-fur)" stroke="#3d1e08" stroke-width="3.5"/>
+    <!-- Right Ear Inner (Cartoon Peach-Pink) -->
+    <circle cx="73" cy="27" r="14" fill="#fca5a5" stroke="#f87171" stroke-width="1.5"/>
 
-    <!-- Head Main -->
-    <path d="M 50 30 C 31 30, 24 45, 26 63 C 27 75, 36 86, 50 86 C 64 86, 73 75, 74 63 C 76 45, 69 30, 50 30 Z" 
-          fill="#6b7280" stroke="#262626" stroke-width="4" stroke-linejoin="round"/>
+    <!-- Head Main (Rich Chestnut Brown) -->
+    <path d="M 50 30 C 31 30, 24 45, 26 63 C 27 76, 36 87, 50 87 C 64 87, 73 76, 74 63 C 76 45, 69 30, 50 30 Z" 
+          fill="url(#jerry-fur)" stroke="#3d1e08" stroke-width="3.5" stroke-linejoin="round"/>
+
+    <!-- Muzzle / Cheeks (Classic Jerry Warm Cream / Tan patch) -->
+    <path d="M 33 63 C 33 54, 40 50, 50 50 C 60 50, 67 54, 67 63 C 67 76, 60 84, 50 84 C 40 84, 33 76, 33 63 Z"
+          fill="url(#jerry-belly)" stroke="#c48a56" stroke-width="1.2"/>
 
     <!-- Whiskers Left (3 curved whiskers) -->
-    <path d="M 33 65 Q 15 63 4 58" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M 33 69 Q 14 71 3 71" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M 34 73 Q 16 80 7 85" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 32 65 Q 15 63 4 58" fill="none" stroke="#3d1e08" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 32 69 Q 14 71 3 71" fill="none" stroke="#3d1e08" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 33 73 Q 16 80 7 85" fill="none" stroke="#3d1e08" stroke-width="2.5" stroke-linecap="round"/>
 
     <!-- Whiskers Right (3 curved whiskers) -->
-    <path d="M 67 65 Q 85 63 96 58" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M 67 69 Q 86 71 97 71" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M 66 73 Q 84 80 93 85" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 68 65 Q 85 63 96 58" fill="none" stroke="#3d1e08" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 68 69 Q 86 71 97 71" fill="none" stroke="#3d1e08" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 67 73 Q 84 80 93 85" fill="none" stroke="#3d1e08" stroke-width="2.5" stroke-linecap="round"/>
 
-    <!-- Eyes (Left & Right) -->
-    <ellipse cx="41" cy="54" rx="4" ry="6.5" fill="#18181b"/>
-    <ellipse cx="59" cy="54" rx="4" ry="6.5" fill="#18181b"/>
+    <!-- Cheerful Eyes (Left & Right) -->
+    <ellipse cx="41" cy="53" rx="4.5" ry="7" fill="#1c0f05"/>
+    <ellipse cx="59" cy="53" rx="4.5" ry="7" fill="#1c0f05"/>
 
-    <!-- Eye Highlights -->
-    <circle cx="39.5" cy="52" r="1.8" fill="#ffffff"/>
-    <circle cx="57.5" cy="52" r="1.8" fill="#ffffff"/>
+    <!-- Eye Catchlights -->
+    <circle cx="39.5" cy="51" r="2" fill="#ffffff"/>
+    <circle cx="57.5" cy="51" r="2" fill="#ffffff"/>
+    <circle cx="42.5" cy="56" r="0.8" fill="#ffffff"/>
+    <circle cx="60.5" cy="56" r="0.8" fill="#ffffff"/>
 
-    <!-- Snout / Nose -->
-    <ellipse cx="50" cy="74" rx="6.5" ry="4.5" fill="#18181b"/>
+    <!-- Snout / Nose (Dark Chocolate with cute shine) -->
+    <ellipse cx="50" cy="73" rx="6.5" ry="4.5" fill="#2b1406"/>
     <!-- Nose Highlight -->
-    <ellipse cx="48.5" cy="72.5" rx="2.5" ry="1.5" fill="#ffffff" opacity="0.75"/>
+    <ellipse cx="48.5" cy="71.5" rx="2.5" ry="1.5" fill="#ffffff" opacity="0.8"/>
 
-    <!-- Cute Smile -->
-    <path d="M 45 79 Q 50 82 55 79" fill="none" stroke="#262626" stroke-width="2" stroke-linecap="round"/>
+    <!-- Cute Smiling Mouth with pink tongue hint -->
+    <path d="M 44 78 Q 50 83 56 78" fill="none" stroke="#3d1e08" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M 47 80 Q 50 83 53 80" fill="#f43f5e" opacity="0.85"/>
   </g>
 </svg>

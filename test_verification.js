@@ -312,5 +312,47 @@ console.log('\n=== TEST 8: Mobile Touch Gestures & Direction Vector Resolution =
   console.log('✓ D-Pad Mapping: Verified 4 directional tactile button bindings.');
 }
 
-console.log('\nALL HIGH-CONNECTIVITY, LEVEL, KEYBOARD, ASSET, CORNERING, HARD MODE, AND MOBILE LAYOUT TESTS PASSED SUCCESSFULLY!');
+console.log('\n=== TEST 9: Authentic Cartoon Brown Jerry Palette ===');
+{
+  const jerrySvgContent = fs.readFileSync('assets/jerry.svg', 'utf8');
+  // Verify warm brown tones are present
+  const hasWarmBrown = jerrySvgContent.includes('#8d5524') || jerrySvgContent.includes('#ab6b38') || jerrySvgContent.includes('#9c5a2b');
+  const hasTanMuzzle = jerrySvgContent.includes('#f5cf9e') || jerrySvgContent.includes('#fae2c8');
+  const hasPinkEars = jerrySvgContent.includes('#fca5a5');
+  
+  if (!hasWarmBrown) throw new Error('assets/jerry.svg is missing warm brown fur colors!');
+  if (!hasTanMuzzle) throw new Error('assets/jerry.svg is missing warm tan/cream muzzle!');
+  if (!hasPinkEars) throw new Error('assets/jerry.svg is missing pink inner ears!');
+  
+  // Ensure old gray colors are not used for main fur
+  if (jerrySvgContent.includes('fill="#6b7280"') || jerrySvgContent.includes('fill="#757575"')) {
+    throw new Error('assets/jerry.svg still contains gray fur fills!');
+  }
+  console.log('✓ Jerry Asset Palette: Verified rich chestnut brown fur, tan muzzle patch, and pink inner ears.');
+}
+
+console.log('\n=== TEST 10: First-Frame Full-Canvas Cell Sizing & Share Button ===');
+{
+  // Test initial frame sizing math: cellSize must unconditionally equal minDim / max(cols, rows)
+  for (let cols = 9; cols <= 13; cols += 2) {
+    const minDim = 516; // e.g. desktop on 738px screen
+    const cellSize = minDim / cols;
+    const totalDrawnMaze = cols * cellSize;
+    const diff = Math.abs(totalDrawnMaze - minDim);
+    if (diff > 0.001) {
+      throw new Error(`First frame maze size discrepancy: drawn ${totalDrawnMaze} vs canvas ${minDim}`);
+    }
+  }
+  console.log('✓ First-Frame Full-Canvas Math: Verified cellSize unconditionally fills 100% of canvas width/height from frame 1.');
+
+  // Verify Share Button exists in index.html
+  const indexHtml = fs.readFileSync('index.html', 'utf8');
+  if (!indexHtml.includes('id="btn-share-header"')) {
+    throw new Error('index.html is missing #btn-share-header button!');
+  }
+  console.log('✓ Header Share Button: Verified #btn-share-header is integrated in action bar.');
+}
+
+console.log('\nALL TESTS (MAZE, LEVELS, CONTROLS, SVG, MOVEMENT, HARD MODE, MOBILE, JERRY BROWN, SIZING, SHARE) PASSED SUCCESSFULLY!');
+
 

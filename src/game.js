@@ -67,7 +67,7 @@ export class GameEngine {
     this.enemy = null;
     this.keys = [];
     this.exit = null;
-    this.maze = null;
+    this.maze = new Maze(this.cols, this.rows, 0.55);
 
     // Active Input Key Stack & Turn Buffer for instant responsive cornering
     this.activeKeyStack = [];
@@ -129,6 +129,10 @@ export class GameEngine {
         this.resizeCanvas();
         this.render();
       }, 150);
+    });
+    window.addEventListener('load', () => {
+      this.resizeCanvas();
+      this.render();
     });
 
     setTimeout(() => {
@@ -228,6 +232,7 @@ export class GameEngine {
       btnRestartPause: document.getElementById('btn-restart-pause'),
       btnMute: document.getElementById('btn-mute'),
       btnToggleAi: document.getElementById('btn-toggle-ai'),
+      btnShareHeader: document.getElementById('btn-share-header'),
 
       aiHud: document.getElementById('ai-hud'),
       aiTacticVal: document.getElementById('ai-tactic-val'),
@@ -284,6 +289,12 @@ export class GameEngine {
       this.copyBragCard();
     });
 
+    if (this.dom.btnShareHeader) {
+      this.dom.btnShareHeader.addEventListener('click', () => {
+        this.shareGame();
+      });
+    }
+
     this.dom.btnPause.addEventListener('click', () => {
       sound.playButtonClick();
       this.togglePause();
@@ -316,6 +327,36 @@ export class GameEngine {
     toast.textContent = message;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  shareGame() {
+    sound.playButtonClick();
+    const shareData = {
+      title: 'Tom & Jerry: Cheese Chase',
+      text: "🧀 Help Jerry collect Swiss cheese and outsmart Tom's AI tactics! Can you beat my high score?",
+      url: window.location.href
+    };
+
+    if (navigator.share && typeof navigator.share === 'function') {
+      navigator.share(shareData).catch(() => {
+        this.copyGameLinkToClipboard();
+      });
+    } else {
+      this.copyGameLinkToClipboard();
+    }
+  }
+
+  copyGameLinkToClipboard() {
+    const url = window.location.href;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(() => {
+        this.showToast('🔗 Game link copied to clipboard! Share with friends!');
+      }).catch(() => {
+        this.showToast('🧀 Share Tom & Jerry: Cheese Chase!');
+      });
+    } else {
+      this.showToast('🧀 Share Tom & Jerry: Cheese Chase!');
+    }
   }
 
   copyBragCard() {
@@ -847,8 +888,8 @@ export class GameEngine {
     const vertPadding = window.innerWidth <= 480 ? 14 : 28;
     const availableH = window.innerHeight - headerH - footerH - mobileH - vertPadding;
 
-    // Minimum size 240px (fits small phones and split views), capped at 680px for desktop
-    const minDim = Math.max(240, Math.floor(Math.min(availableW, availableH, 680)));
+    // Minimum size 220px (fits small phones and split views), capped at 680px for desktop
+    const minDim = Math.max(220, Math.floor(Math.min(availableW, availableH, 680)));
 
     this.canvas.width = minDim;
     this.canvas.height = minDim;
@@ -857,9 +898,9 @@ export class GameEngine {
     container.style.width = `${minDim}px`;
     container.style.height = `${minDim}px`;
 
-    if (this.maze) {
-      this.cellSize = minDim / Math.max(this.cols, this.rows);
-    }
+    // Unconditionally compute cellSize so the maze fills the entire canvas on the very first frame
+    const maxCells = Math.max(this.cols || 9, this.rows || 9);
+    this.cellSize = minDim / maxCells;
   }
 
   startNewGame(level = 1) {
@@ -896,10 +937,11 @@ export class GameEngine {
     this.dom.tensionVignette.classList.remove('active');
 
     this.particles.clear();
-    this.resizeCanvas();
 
-    // High-connectivity maze with 3-4 ways at almost every cell
+    // High-connectivity maze with 3-4 ways at almost every cell (created BEFORE resizeCanvas!)
     this.maze = new Maze(this.cols, this.rows, 0.55);
+    this.resizeCanvas();
+    window.scrollTo(0, 0);
 
     // Player spawn at (0, 0)
     this.player = {
@@ -1496,12 +1538,15 @@ export class GameEngine {
     for (let i = 0; i < this.maxLives; i++) {
       const isLost = i >= this.lives;
       heartsHtml += `<svg class="life-icon ${isLost ? 'lost' : ''}" viewBox="0 0 24 24" title="Jerry Life">
-        <circle cx="6" cy="7" r="4.5" fill="#fca5a5" stroke="#451a03" stroke-width="1.2"/>
-        <circle cx="18" cy="7" r="4.5" fill="#fca5a5" stroke="#451a03" stroke-width="1.2"/>
-        <ellipse cx="12" cy="14" rx="7" ry="6.5" fill="${isLost ? '#94a3b8' : '#e2e8f0'}" stroke="#451a03" stroke-width="1.5"/>
-        <ellipse cx="12" cy="17.5" rx="1.8" ry="1.2" fill="#f43f5e"/>
-        <circle cx="9.5" cy="13" r="1.2" fill="#1e293b"/>
-        <circle cx="14.5" cy="13" r="1.2" fill="#1e293b"/>
+        <circle cx="6" cy="7" r="4.5" fill="${isLost ? '#856d5a' : '#8d5524'}" stroke="#3d1e08" stroke-width="1.2"/>
+        <circle cx="6" cy="7" r="2.6" fill="${isLost ? '#94a3b8' : '#fca5a5'}"/>
+        <circle cx="18" cy="7" r="4.5" fill="${isLost ? '#856d5a' : '#8d5524'}" stroke="#3d1e08" stroke-width="1.2"/>
+        <circle cx="18" cy="7" r="2.6" fill="${isLost ? '#94a3b8' : '#fca5a5'}"/>
+        <ellipse cx="12" cy="14" rx="7" ry="6.5" fill="${isLost ? '#856d5a' : '#9c5a2b'}" stroke="#3d1e08" stroke-width="1.5"/>
+        <ellipse cx="12" cy="15.8" rx="4.5" ry="3.5" fill="${isLost ? '#94a3b8' : '#f5cf9e'}"/>
+        <ellipse cx="12" cy="17.2" rx="1.8" ry="1.2" fill="#2b1406"/>
+        <circle cx="9.5" cy="13" r="1.2" fill="#1c0f05"/>
+        <circle cx="14.5" cy="13" r="1.2" fill="#1c0f05"/>
       </svg>`;
     }
     this.dom.livesContainer.innerHTML = heartsHtml;
@@ -1947,7 +1992,7 @@ export class GameEngine {
     if (this.assets.jerry && this.assets.jerry.complete && this.assets.jerry.naturalWidth > 0) {
       ctx.drawImage(this.assets.jerry, -charSize / 2, -charSize / 2, charSize, charSize);
     } else {
-      ctx.fillStyle = '#6b7280';
+      ctx.fillStyle = '#9c5a2b';
       ctx.beginPath();
       ctx.arc(0, 0, charSize * 0.4, 0, Math.PI * 2);
       ctx.fill();

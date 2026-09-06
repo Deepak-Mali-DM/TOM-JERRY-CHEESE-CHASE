@@ -209,6 +209,16 @@ header {
   color: var(--border-focus);
 }
 
+.btn-share-header:hover {
+  border-color: #65a30d;
+  color: #65a30d;
+  box-shadow: 0 0 12px rgba(101, 163, 13, 0.4);
+}
+
+.btn-share-header:hover .svg-icon {
+  transform: scale(1.15) rotate(-5deg);
+}
+
 /* Hard Mode Toggle Button */
 .btn-hard-toggle {
   transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
