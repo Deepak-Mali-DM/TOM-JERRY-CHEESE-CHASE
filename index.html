@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Tom &amp; Jerry: Cheese Chase - Cartoon Garden Maze</title>
+  <meta name="description" content="Help Jerry the mouse collect all 3 delicious Swiss cheese wedges and scurry into the cozy mouse hole before Tom the cat catches you! 10 progressive garden hedge maze levels.">
+  <meta name="theme-color" content="#8da93c">
+  <link rel="icon" type="image/svg+xml" href="assets/cheese.svg">
+  <!-- Cartoon Modern Typography: Fredoka & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Tension Proximity Screen Vignette -->
+  <div id="tension-vignette" aria-hidden="true"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast" role="status" aria-live="polite">Copied to Clipboard!</div>
+
+  <div id="game-container">
+    <!-- Header & Action Bar -->
+    <header>
+      <div class="top-bar">
+        <div class="game-title">
+          <img src="assets/logo.svg" alt="Tom &amp; Jerry: Cheese Chase Logo" class="brand-logo-img">
+          <span class="badge">TACTICAL AI HUNT</span>
+        </div>
+        <div class="header-actions">
+          <button id="btn-theme" class="btn-icon" title="Toggle Day / Night Garden" aria-label="Toggle Theme">
+            <svg id="theme-icon-moon" class="svg-icon" viewBox="0 0 24 24" style="display:none;">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg id="theme-icon-sun" class="svg-icon" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+              <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
+              <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
+              <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
+          <button id="btn-toggle-ai" class="btn-icon" title="Toggle Tom's Hunter Vision (Hotkey: V)">
+            <svg class="svg-icon" viewBox="0 0 24 24">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span class="btn-text">Tom's Sight</span>
+          </button>
+          <button id="btn-mute" class="btn-icon" title="Toggle Cartoon Audio">
+            <svg class="svg-icon" viewBox="0 0 24 24">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+            <span class="btn-text">Audio</span>
+          </button>
+          <button id="btn-pause" class="btn-icon" title="Pause Game (Hotkey: P)">
+            <svg class="svg-icon" viewBox="0 0 24 24">
+              <rect x="6" y="4" width="4" height="16"/>
+              <rect x="14" y="4" width="4" height="16"/>
+            </svg>
+            <span class="btn-text">Pause</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main HUD Stats -->
+      <section class="hud-bar" aria-label="Game HUD">
+        <div class="hud-item">
+          <span class="hud-label">CLOCK</span>
+          <span id="timer-val" class="hud-value">80:00</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">LEVEL</span>
+          <span id="level-val" class="hud-value">1</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">CHEESE</span>
+          <div id="keys-container" class="hud-value"></div>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">JERRY LIVES</span>
+          <div id="lives-container" class="hud-value"></div>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">STUN TRAP</span>
+          <button id="btn-emp-hud" class="emp-hud-btn" title="Snap Cartoon Trap to Stun Tom (Spacebar)">
+            <span class="trap-icon">💥</span>
+            <span id="emp-status-text">READY</span>
+          </button>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">SCORE</span>
+          <span id="score-val" class="hud-value">0</span>
+        </div>
+      </section>
+
+      <!-- Countdown Progress Bar -->
+      <div class="timer-bar-wrapper">
+        <div id="timer-progress" class="timer-progress" style="width: 100%;"></div>
+      </div>
+
+      <!-- 10-Level Direct Jump Selector Bar -->
+      <nav class="level-selector-nav" aria-label="Select Level Directly">
+        <span class="level-nav-label">GARDEN LEVEL:</span>
+        <div class="level-pills-container" id="level-pills-container">
+          <!-- Rendered dynamically 1-10 -->
+        </div>
+      </nav>
+    </header>
+
+    <!-- Canvas Play Area -->
+    <main class="main-stage">
+      <div id="canvas-wrapper">
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+
+        <!-- AI Telemetry HUD -->
+        <aside id="ai-hud" aria-label="Tom AI Telemetry">
+          <div class="ai-hud-title">
+            <span>TOM'S TACTICS</span>
+            <span id="ai-tactic-val" class="tactic-badge tactic-chase">CHASE</span>
+          </div>
+          <div class="ai-stat-row">
+            <span class="ai-stat-label">Tom's Target:</span>
+            <span id="ai-target-val" class="ai-stat-val">(0, 0)</span>
+          </div>
+          <div class="ai-stat-row">
+            <span class="ai-stat-label">A* Path Length:</span>
+            <span id="ai-path-val" class="ai-stat-val">0 steps</span>
+          </div>
+          <div class="ai-stat-row">
+            <span class="ai-stat-label">Explored Nodes:</span>
+            <span id="ai-explored-val" class="ai-stat-val">0 nodes</span>
+          </div>
+          <div class="ai-stat-row">
+            <span class="ai-stat-label">Alpha-Beta Pruned:</span>
+            <span id="ai-pruned-val" class="ai-stat-val">0 branches</span>
+          </div>
+          <div class="ai-stat-row">
+            <span class="ai-stat-label">Minimax Utility:</span>
+            <span id="ai-score-val" class="ai-stat-val">0</span>
+          </div>
+        </aside>
+
+        <!-- Start Screen Modal -->
+        <div id="start-modal" class="modal-overlay">
+          <div class="modal-card">
+            <img src="assets/logo.svg" alt="Tom &amp; Jerry Logo" class="modal-logo-img">
+            <h2>TOM &amp; JERRY: CHEESE CHASE</h2>
+            <p class="modal-subtitle">Jerry is on the prowl for Swiss cheese! Collect all 3 golden cheese wedges and scurry into the cozy mouse hole before Tom catches you!</p>
+            <div class="rules-list">
+              <div class="rule-item">
+                <span class="rule-emoji">🧀</span>
+                <span><strong>Snatch 3 Cheeses</strong>: Gather every delicious Swiss cheese wedge hidden across the garden trail.</span>
+              </div>
+              <div class="rule-item">
+                <span class="rule-emoji">🚪</span>
+                <span><strong>Mouse Hole Escape</strong>: The cozy arched burrow unlocks as soon as all 3 cheeses are in Jerry's paws!</span>
+              </div>
+              <div class="rule-item">
+                <span class="rule-emoji">🐱</span>
+                <span><strong>Tom is Hunting</strong>: Tom uses tactical AI to chase, intercept, and corner you. Keep moving!</span>
+              </div>
+              <div class="rule-item">
+                <span class="rule-emoji">💥</span>
+                <span><strong>Stun Trap [Spacebar]</strong>: Drop a comical spring trap to freeze Tom with spinning dizzy stars for 3.5s!</span>
+              </div>
+            </div>
+            <button id="btn-start" class="btn-primary">PLAY LEVEL 1 <kbd class="btn-kbd">ENTER ↵</kbd></button>
+          </div>
+        </div>
+
+        <!-- Pause Modal -->
+        <div id="pause-modal" class="modal-overlay hidden">
+          <div class="modal-card">
+            <h2>GAME PAUSED</h2>
+            <p class="modal-subtitle">Take a breather! Clock and Tom are frozen.</p>
+            <button id="btn-resume" class="btn-primary">RESUME <kbd class="btn-kbd">ENTER ↵</kbd></button>
+            <button id="btn-restart-pause" class="btn-secondary">RESTART LEVEL</button>
+          </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div id="game-over-modal" class="modal-overlay hidden">
+          <div class="modal-card">
+            <h2 style="color: var(--accent-red);">TOM CAUGHT JERRY!</h2>
+            <p id="loss-reason" class="modal-subtitle">Tom snatched the cheese! Don't let him get away with it!</p>
+            <div class="brag-card">
+              <div class="score-row">
+                <span>Level Attempted:</span>
+                <span id="level-loss-text" class="score-val">Level 1</span>
+              </div>
+              <div class="score-row">
+                <span>Cheese Found:</span>
+                <span id="keys-found-loss" class="score-val">0 / 3</span>
+              </div>
+              <div class="score-row total">
+                <span>FINAL SCORE</span>
+                <span id="final-score-loss" class="score-val">0</span>
+              </div>
+            </div>
+            <button id="btn-restart-loss" class="btn-primary">RETRY LEVEL <kbd class="btn-kbd">ENTER / R ↵</kbd></button>
+          </div>
+        </div>
+
+        <!-- Victory Modal with Survival Brag Card -->
+        <div id="victory-modal" class="modal-overlay hidden">
+          <div class="modal-card">
+            <h2 style="color: var(--accent-green);">CHEESE HEIST SUCCESSFUL!</h2>
+            <p class="modal-subtitle">Jerry grabbed all the Swiss cheese and scurried safely into the mouse hole!</p>
+            
+            <div class="brag-card">
+              <div class="rank-display">
+                <span class="rank-title">PERFORMANCE RANK</span>
+                <span id="rank-badge-val" class="rank-badge">S+ CHEESE MASTER</span>
+              </div>
+              <div class="score-row">
+                <span>Time Remaining:</span>
+                <span id="time-bonus-win" class="score-val">+0</span>
+              </div>
+              <div class="score-row">
+                <span>Jerry Lives Kept:</span>
+                <span id="lives-bonus-win" class="score-val">+0</span>
+              </div>
+              <div class="score-row total">
+                <span>TOTAL SCORE</span>
+                <span id="final-score-win" class="score-val">0</span>
+              </div>
+            </div>
+
+            <button id="btn-share-card" class="btn-primary btn-share">📋 COPY BRAG CARD</button>
+            <button id="btn-next-level" class="btn-primary" style="margin-top: 8px;">NEXT LEVEL <kbd class="btn-kbd">ENTER / N ↵</kbd></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Virtual D-Pad for Mobile -->
+      <nav id="mobile-controls" aria-label="Mobile Controls">
+        <div class="dpad-container">
+          <button id="dpad-up" class="dpad-btn" aria-label="Move Up">▲</button>
+          <button id="dpad-left" class="dpad-btn" aria-label="Move Left">◀</button>
+          <div id="dpad-center"></div>
+          <button id="dpad-right" class="dpad-btn" aria-label="Move Right">▶</button>
+          <button id="dpad-down" class="dpad-btn" aria-label="Move Down">▼</button>
+        </div>
+        <button id="btn-emp-mobile" class="mobile-emp-btn" aria-label="Trigger Stun Trap">
+          <span style="font-size: 20px;">💥</span>
+          <span>TRAP</span>
+        </button>
+      </nav>
+
+      <!-- Keyboard Shortcuts & Controls Footer -->
+      <footer class="game-footer">
+        <div class="footer-tip">
+          <kbd class="key-pill">WASD</kbd> / <kbd class="key-pill">↑←↓→</kbd> Scurry
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">SPACE</kbd> Stun Trap
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">ENTER</kbd> / <kbd class="key-pill">N</kbd> Next Level
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">R</kbd> Restart
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">V</kbd> Tom's Sight
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">P</kbd> Pause
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">1-0</kbd> Jump Level
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Game Scripts -->
+  <script type="module" src="src/game.js"></script>
+</body>
+</html>

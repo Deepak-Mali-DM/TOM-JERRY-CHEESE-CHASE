@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Group with shadow -->
+  <g filter="url(#soft-shadow)">
+    <!-- Left Ear Outer -->
+    <circle cx="28" cy="28" r="21" fill="#757575" stroke="#262626" stroke-width="4"/>
+    <!-- Left Ear Inner Pink -->
+    <circle cx="28" cy="28" r="14" fill="#fca5a5"/>
+
+    <!-- Right Ear Outer -->
+    <circle cx="72" cy="28" r="21" fill="#757575" stroke="#262626" stroke-width="4"/>
+    <!-- Right Ear Inner Pink -->
+    <circle cx="72" cy="28" r="14" fill="#fca5a5"/>
+
+    <!-- Head Main -->
+    <path d="M 50 30 C 31 30, 24 45, 26 63 C 27 75, 36 86, 50 86 C 64 86, 73 75, 74 63 C 76 45, 69 30, 50 30 Z" 
+          fill="#6b7280" stroke="#262626" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Whiskers Left (3 curved whiskers) -->
+    <path d="M 33 65 Q 15 63 4 58" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 33 69 Q 14 71 3 71" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 34 73 Q 16 80 7 85" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Whiskers Right (3 curved whiskers) -->
+    <path d="M 67 65 Q 85 63 96 58" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 67 69 Q 86 71 97 71" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 66 73 Q 84 80 93 85" fill="none" stroke="#262626" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Eyes (Left & Right) -->
+    <ellipse cx="41" cy="54" rx="4" ry="6.5" fill="#18181b"/>
+    <ellipse cx="59" cy="54" rx="4" ry="6.5" fill="#18181b"/>
+
+    <!-- Eye Highlights -->
+    <circle cx="39.5" cy="52" r="1.8" fill="#ffffff"/>
+    <circle cx="57.5" cy="52" r="1.8" fill="#ffffff"/>
+
+    <!-- Snout / Nose -->
+    <ellipse cx="50" cy="74" rx="6.5" ry="4.5" fill="#18181b"/>
+    <!-- Nose Highlight -->
+    <ellipse cx="48.5" cy="72.5" rx="2.5" ry="1.5" fill="#ffffff" opacity="0.75"/>
+
+    <!-- Cute Smile -->
+    <path d="M 45 79 Q 50 82 55 79" fill="none" stroke="#262626" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

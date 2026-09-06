@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <radialGradient id="hole-glow" cx="50%" cy="65%" r="55%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="1"/>
+      <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#451a03" stop-opacity="1"/>
+    </radialGradient>
+    <filter id="cozy-shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#cozy-shadow)">
+    <!-- Base Skirting Board / Wall Slice -->
+    <rect x="10" y="78" width="80" height="16" rx="4" fill="#78350f" stroke="#2c1a0e" stroke-width="3"/>
+    <line x1="12" y1="84" x2="88" y2="84" stroke="#92400e" stroke-width="2"/>
+
+    <!-- Arch Trim Outer (Carved Wood) -->
+    <path d="M 22 84 L 22 45 A 28 28 0 0 1 78 45 L 78 84 Z" fill="#92400e" stroke="#2c1a0e" stroke-width="4"/>
+
+    <!-- Mouse Hole Deep Opening with Warm Amber Glow -->
+    <path d="M 28 84 L 28 46 A 22 22 0 0 1 72 46 L 72 84 Z" fill="url(#hole-glow)" stroke="#2c1a0e" stroke-width="3"/>
+
+    <!-- Cozy Interior Elements: Little Welcome Door / Lantern inside -->
+    <ellipse cx="50" cy="80" rx="14" ry="4" fill="#b45309" opacity="0.6"/>
+
+    <!-- Little "HOME" Wooden Signboard Plaque on top -->
+    <rect x="34" y="18" width="32" height="15" rx="3" fill="#d97706" stroke="#2c1a0e" stroke-width="2.5"/>
+    <circle cx="37" cy="22" r="1.2" fill="#2c1a0e"/>
+    <circle cx="63" cy="22" r="1.2" fill="#2c1a0e"/>
+    <text x="50" y="29" font-family="'Fredoka', 'Nunito', sans-serif" font-weight="900" font-size="8" fill="#451a03" text-anchor="middle" letter-spacing="1">HOME</text>
+
+    <!-- Hanging Sign Chains -->
+    <line x1="40" y1="14" x2="40" y2="18" stroke="#78350f" stroke-width="2"/>
+    <line x1="60" y1="14" x2="60" y2="18" stroke="#78350f" stroke-width="2"/>
+
+    <!-- Decorative Daisy on Arch Trim -->
+    <circle cx="24" cy="40" r="3" fill="#facc15"/>
+    <circle cx="21" cy="38" r="2.2" fill="#ffffff"/>
+    <circle cx="27" cy="38" r="2.2" fill="#ffffff"/>
+    <circle cx="24" cy="35" r="2.2" fill="#ffffff"/>
+    <circle cx="22" cy="43" r="2.2" fill="#ffffff"/>
+    <circle cx="26" cy="43" r="2.2" fill="#ffffff"/>
+  </g>
+</svg>

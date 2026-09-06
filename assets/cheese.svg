@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <filter id="cheese-glow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#b45309" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#cheese-glow)">
+    <!-- Main Wedge 3D Base (Side Face) -->
+    <polygon points="18,52 82,24 86,64 22,86" fill="#d97706" stroke="#451a03" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Front Face -->
+    <polygon points="18,52 22,86 48,90 44,56" fill="#b45309" stroke="#451a03" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Top Slanted Face (Bright Golden Cheese) -->
+    <polygon points="18,52 82,24 58,16 4,44" fill="#fbbf24" stroke="#451a03" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Wedge Tip Left -->
+    <polygon points="4,44 18,52 22,86 10,76" fill="#f59e0b" stroke="#451a03" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Cheese Holes on Top -->
+    <ellipse cx="44" cy="34" rx="7" ry="4.5" fill="#f59e0b" stroke="#451a03" stroke-width="2"/>
+    <ellipse cx="28" cy="46" rx="4.5" ry="3" fill="#f59e0b" stroke="#451a03" stroke-width="1.8"/>
+    <ellipse cx="66" cy="22" rx="5" ry="3" fill="#f59e0b" stroke="#451a03" stroke-width="2"/>
+    <ellipse cx="50" cy="22" rx="3.5" ry="2" fill="#f59e0b" stroke="#451a03" stroke-width="1.5"/>
+
+    <!-- Cheese Holes on Side/Front -->
+    <ellipse cx="60" cy="54" rx="7" ry="9" fill="#92400e" stroke="#451a03" stroke-width="2.5"/>
+    <!-- Inner Hole Shadow Rim -->
+    <ellipse cx="61.5" cy="55.5" rx="5" ry="6.5" fill="#78350f"/>
+
+    <ellipse cx="76" cy="44" rx="4" ry="5.5" fill="#92400e" stroke="#451a03" stroke-width="2"/>
+    <ellipse cx="38" cy="72" rx="5.5" ry="6.5" fill="#78350f" stroke="#451a03" stroke-width="2"/>
+    <ellipse cx="72" cy="62" rx="3" ry="4" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+
+    <!-- Edge Notch Bite / Dimple -->
+    <path d="M 82 40 C 78 41, 78 47, 83 48" fill="#92400e" stroke="#451a03" stroke-width="2"/>
+
+    <!-- Highlighting Shine -->
+    <path d="M 12 45 L 35 36" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+</svg>

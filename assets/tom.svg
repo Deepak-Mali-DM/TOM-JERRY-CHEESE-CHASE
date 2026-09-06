@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <filter id="cat-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#cat-shadow)">
+    <!-- Left Ear Outer (Pointed) -->
+    <path d="M 22 45 L 14 12 L 42 26 Z" fill="#475569" stroke="#1e293b" stroke-width="3.5" stroke-linejoin="round"/>
+    <!-- Left Ear Inner Pink -->
+    <path d="M 23 40 L 18 18 L 38 28 Z" fill="#fca5a5"/>
+
+    <!-- Right Ear Outer (Pointed) -->
+    <path d="M 78 45 L 86 12 L 58 26 Z" fill="#475569" stroke="#1e293b" stroke-width="3.5" stroke-linejoin="round"/>
+    <!-- Right Ear Inner Pink -->
+    <path d="M 77 40 L 82 18 L 62 28 Z" fill="#fca5a5"/>
+
+    <!-- Head Main (Slate Grey Cat) -->
+    <path d="M 50 25 C 28 25, 20 40, 20 60 C 20 78, 32 87, 50 87 C 68 87, 80 78, 80 60 C 80 40, 72 25, 50 25 Z" 
+          fill="#52647d" stroke="#1e293b" stroke-width="4" stroke-linejoin="round"/>
+
+    <!-- Forehead Fur Markings -->
+    <path d="M 46 26 L 48 38 L 50 26 L 52 38 L 54 26" fill="none" stroke="#334155" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- White Muzzle / Cheeks -->
+    <path d="M 50 58 C 42 58, 30 62, 30 72 C 30 81, 40 85, 50 85 C 60 85, 70 81, 70 72 C 70 62, 58 58, 50 58 Z" 
+          fill="#f8fafc" stroke="#1e293b" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M 50 68 L 50 78" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Pink Triangular Nose -->
+    <polygon points="50,68 44,60 56,60" fill="#f43f5e" stroke="#1e293b" stroke-width="2" stroke-linejoin="round"/>
+
+    <!-- Mischievous Smirk / Mouth -->
+    <path d="M 40 76 Q 46 80 50 78 Q 54 80 60 76" fill="none" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Fierce / Curious Cat Eyes -->
+    <!-- Left Eye Background (Bright Yellow) -->
+    <ellipse cx="37" cy="48" rx="8.5" ry="11" fill="#facc15" stroke="#1e293b" stroke-width="2.5"/>
+    <!-- Left Pupil (Slit) -->
+    <ellipse cx="38" cy="48" rx="3" ry="8" fill="#0f172a"/>
+    <circle cx="36.5" cy="44" r="2" fill="#ffffff"/>
+
+    <!-- Right Eye Background (Bright Yellow) -->
+    <ellipse cx="63" cy="48" rx="8.5" ry="11" fill="#facc15" stroke="#1e293b" stroke-width="2.5"/>
+    <!-- Right Pupil (Slit) -->
+    <ellipse cx="62" cy="48" rx="3" ry="8" fill="#0f172a"/>
+    <circle cx="60.5" cy="44" r="2" fill="#ffffff"/>
+
+    <!-- Hunter Eyebrows -->
+    <path d="M 28 37 Q 38 42 45 40" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 72 37 Q 62 42 55 40" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- Whiskers Left (3 sharp whiskers) -->
+    <path d="M 33 69 Q 16 67 4 64" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 33 73 Q 15 75 2 77" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 34 77 Q 18 84 8 90" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Whiskers Right (3 sharp whiskers) -->
+    <path d="M 67 69 Q 84 67 96 64" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 67 73 Q 85 75 98 77" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 66 77 Q 82 84 92 90" fill="none" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>

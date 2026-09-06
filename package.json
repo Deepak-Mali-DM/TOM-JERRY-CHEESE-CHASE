@@ -1,0 +1,9 @@
+{
+  "name": "one-minute-maze",
+  "version": "1.0.0",
+  "description": "One Minute Maze - Tactical AI Procedural Maze Game",
+  "type": "module",
+  "scripts": {
+    "test": "node test_verification.js"
+  }
+}
