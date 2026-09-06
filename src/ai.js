@@ -19,22 +19,24 @@ export const TACTIC = {
 
 export class TacticalAI {
   /**
-   * Decide the best tactic using Minimax with Alpha-Beta pruning, with level scaling
-   * and exit camping prevention.
+   * Decide the best tactic using Minimax with Alpha-Beta pruning, with level scaling,
+   * exit camping prevention, and nightmare Hard Mode intelligence.
    */
-  static decideTactic(maze, enemyPos, player, keys, exitPos, timeLeft, level = 1, exitCampTimer = 0, maxDepth = 3) {
+  static decideTactic(maze, enemyPos, player, keys, exitPos, timeLeft, level = 1, exitCampTimer = 0, maxDepth = 3, hardMode = false) {
     const uncollectedKeys = keys.filter(k => !k.collected);
     const playerHasAllKeys = uncollectedKeys.length === 0;
+
+    const effectiveDepth = hardMode ? Math.max(4, maxDepth) : maxDepth;
 
     const stats = {
       nodesEvaluated: 0,
       prunedBranches: 0,
-      depth: maxDepth,
+      depth: effectiveDepth,
       tacticsEvaluated: []
     };
 
-    // LEVEL 1: Easy Mode - Enemy uses gentle chase with no aggressive intercept or camping
-    if (level === 1) {
+    // LEVEL 1: Easy Mode (Only if NOT in Hard Mode)
+    if (level === 1 && !hardMode) {
       stats.nodesEvaluated = 1;
       return {
         tactic: TACTIC.CHASE,
@@ -53,7 +55,8 @@ export class TacticalAI {
       exitPos,
       playerHasAllKeys,
       exitCampTimer,
-      level
+      level,
+      hardMode
     );
 
     let bestScore = -Infinity;
@@ -82,7 +85,7 @@ export class TacticalAI {
       );
 
       // Add tactical posture bias based on macro game state & anti-camping rules
-      score += this.getTacticalBias(candidate, enemyPos, player, uncollectedKeys, exitPos, timeLeft, exitCampTimer, level);
+      score += this.getTacticalBias(candidate, enemyPos, player, uncollectedKeys, exitPos, timeLeft, exitCampTimer, level, hardMode);
 
       stats.tacticsEvaluated.push({
         tactic: candidate.tactic,
@@ -112,9 +115,9 @@ export class TacticalAI {
   }
 
   /**
-   * Tactical bias adjustment with anti-camping rules.
+   * Tactical bias adjustment with anti-camping rules and Nightmare Hard Mode logic.
    */
-  static getTacticalBias(candidate, enemyPos, player, uncollectedKeys, exitPos, timeLeft, exitCampTimer, level) {
+  static getTacticalBias(candidate, enemyPos, player, uncollectedKeys, exitPos, timeLeft, exitCampTimer, level, hardMode = false) {
     let bias = 0;
     const distToPlayer = Math.abs(enemyPos.c - player.c) + Math.abs(enemyPos.r - player.r);
     const distToExit = Math.abs(enemyPos.c - exitPos.c) + Math.abs(enemyPos.r - exitPos.r);
@@ -122,9 +125,12 @@ export class TacticalAI {
 
     switch (candidate.tactic) {
       case TACTIC.CHASE:
-        // Always viable when close
+        // Relentless chase: Always viable when close
         if (distToPlayer <= 5) {
-          bias += (6 - distToPlayer) * 70;
+          bias += (6 - distToPlayer) * (hardMode ? 140 : 70);
+        }
+        if (hardMode) {
+          bias += 300; // Tom aggressively hunts Jerry in Hard Mode
         }
         // If enemy was camping the exit, strongly incentivize switching to Chase to break away!
         if (exitCampTimer > 2.0) {
@@ -133,28 +139,29 @@ export class TacticalAI {
         break;
 
       case TACTIC.INTERCEPT:
-        if (level >= 3 && distToPlayer > 3 && distToPlayer < 12) {
+        if (hardMode) {
+          bias += 450; // Super high intercept priority in Hard Mode!
+        } else if (level >= 3 && distToPlayer > 3 && distToPlayer < 12) {
           bias += 160;
         } else if (level === 2) {
-          bias += 60; // Mild intercept on level 2
+          bias += 60;
         }
         break;
 
       case TACTIC.GUARD_EXIT:
-        // Anti-camping rule: If enemy has been guarding the exit for more than 2.5 seconds,
-        // penalize heavily so enemy leaves the gate open for the player!
+        // Anti-camping rule
         if (exitCampTimer > 2.5) {
           bias -= 3500;
           break;
         }
 
         if (uncollectedKeys.length === 0) {
-          bias += 700;
+          bias += hardMode ? 1000 : 700;
           if (distToExit < playerDistToExit) {
-            bias += 300;
+            bias += 400;
           }
-        } else if (uncollectedKeys.length === 1 && level >= 3) {
-          bias += 150;
+        } else if (uncollectedKeys.length === 1 && (level >= 3 || hardMode)) {
+          bias += 250;
         } else {
           bias -= 300;
         }
@@ -166,8 +173,8 @@ export class TacticalAI {
           const playerDistToKey = Math.abs(player.c - keyTarget.c) + Math.abs(player.r - keyTarget.r);
           const enemyDistToKey = Math.abs(enemyPos.c - keyTarget.c) + Math.abs(enemyPos.r - keyTarget.r);
 
-          if (playerDistToKey < 5 && enemyDistToKey <= playerDistToKey + 1) {
-            bias += 250;
+          if (playerDistToKey < 6 && enemyDistToKey <= playerDistToKey + 2) {
+            bias += hardMode ? 450 : 250;
           }
         }
         break;
@@ -191,7 +198,7 @@ export class TacticalAI {
   /**
    * Generates candidate tactical actions and their target destinations.
    */
-  static generateCandidateTactics(maze, enemyPos, player, uncollectedKeys, exitPos, playerHasAllKeys, exitCampTimer, level) {
+  static generateCandidateTactics(maze, enemyPos, player, uncollectedKeys, exitPos, playerHasAllKeys, exitCampTimer, level, hardMode = false) {
     const candidates = [];
 
     // Tactic 1: Direct Chase
@@ -201,7 +208,7 @@ export class TacticalAI {
       description: 'Hunt player directly'
     });
 
-    // Tactic 2: Intercept
+    // Tactic 2: Predictive Intercept
     let primaryObjective = exitPos;
     if (!playerHasAllKeys && uncollectedKeys.length > 0) {
       let minDist = Infinity;
@@ -216,8 +223,8 @@ export class TacticalAI {
 
     const playerToObjPath = AStar.findPath(maze, { c: player.c, r: player.r }, primaryObjective);
     if (playerToObjPath.found && playerToObjPath.path.length > 2) {
-      const interceptIndex = Math.min(3, Math.floor(playerToObjPath.path.length / 2));
-      const interceptCell = playerToObjPath.path[interceptIndex];
+      const interceptLead = hardMode ? Math.min(5, playerToObjPath.path.length - 1) : Math.min(3, Math.floor(playerToObjPath.path.length / 2));
+      const interceptCell = playerToObjPath.path[interceptLead];
       candidates.push({
         tactic: TACTIC.INTERCEPT,
         target: { c: interceptCell.c, r: interceptCell.r },
@@ -225,8 +232,9 @@ export class TacticalAI {
       });
     } else {
       const pDir = player.lastDir || { c: 0, r: 0 };
-      const aheadC = Math.max(0, Math.min(maze.cols - 1, player.c + pDir.c * 2));
-      const aheadR = Math.max(0, Math.min(maze.rows - 1, player.r + pDir.r * 2));
+      const aheadMultiplier = hardMode ? 4 : 2;
+      const aheadC = Math.max(0, Math.min(maze.cols - 1, player.c + pDir.c * aheadMultiplier));
+      const aheadR = Math.max(0, Math.min(maze.rows - 1, player.r + pDir.r * aheadMultiplier));
       candidates.push({
         tactic: TACTIC.INTERCEPT,
         target: { c: aheadC, r: aheadR },

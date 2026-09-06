@@ -74,6 +74,9 @@ export class GameEngine {
     this.touchDir = null;
     this.turnBuffer = null;
 
+    // Hard Mode state (Nightmare Tom: Super Fast & Smart)
+    this.hardMode = localStorage.getItem('omm_hard_mode') === 'true';
+
     // Anti-exit-camping tracker
     this.exitCampTimer = 0;
 
@@ -204,6 +207,9 @@ export class GameEngine {
       rankBadgeVal: document.getElementById('rank-badge-val'),
 
       btnTheme: document.getElementById('btn-theme'),
+      btnHardMode: document.getElementById('btn-hard-mode'),
+      hardModeState: document.getElementById('hard-mode-state'),
+      hardModeBadge: document.getElementById('hard-mode-badge'),
       btnStart: document.getElementById('btn-start'),
       btnRestartLoss: document.getElementById('btn-restart-loss'),
       btnNextLevel: document.getElementById('btn-next-level'),
@@ -229,6 +235,14 @@ export class GameEngine {
     };
 
     this.dom.btnTheme.addEventListener('click', () => this.toggleTheme());
+
+    if (this.dom.btnHardMode) {
+      this.dom.btnHardMode.addEventListener('click', () => {
+        sound.playButtonClick();
+        this.toggleHardMode();
+      });
+      this.updateHardModeUI();
+    }
 
     const triggerEMP = () => this.activateEMP();
     this.dom.btnEmpHud.addEventListener('click', triggerEMP);
@@ -319,6 +333,44 @@ export class GameEngine {
     }
     if (this.aiVisionEnabled) {
       this.updateAiHud();
+    }
+  }
+
+  toggleHardMode() {
+    this.hardMode = !this.hardMode;
+    localStorage.setItem('omm_hard_mode', this.hardMode.toString());
+    this.updateHardModeUI();
+
+    if (this.enemy) {
+      const cfg = LEVEL_CONFIGS[this.level - 1] || LEVEL_CONFIGS[0];
+      if (this.hardMode) {
+        this.enemy.speed = Math.min(5.5, 4.6 + this.level * 0.1);
+        this.enemy.defaultPause = 0;
+        this.enemy.pauseAtIntersection = 0;
+      } else {
+        this.enemy.speed = cfg.enemySpeed;
+        this.enemy.defaultPause = cfg.pauseAtIntersection;
+      }
+      this.updateEnemyTactics();
+    }
+
+    if (this.hardMode) {
+      this.showToast('🔥 HARD MODE ON: TOM IS ULTRA-FAST & SMART!');
+    } else {
+      this.showToast('🌿 NORMAL MODE: BALANCED GAMEPLAY');
+    }
+  }
+
+  updateHardModeUI() {
+    if (!this.dom) return;
+    if (this.dom.btnHardMode) {
+      this.dom.btnHardMode.classList.toggle('active', this.hardMode);
+    }
+    if (this.dom.hardModeState) {
+      this.dom.hardModeState.textContent = this.hardMode ? 'ON' : 'OFF';
+    }
+    if (this.dom.hardModeBadge) {
+      this.dom.hardModeBadge.style.display = this.hardMode ? 'inline-flex' : 'none';
     }
   }
 
@@ -427,6 +479,11 @@ export class GameEngine {
       }
 
       // Hotkeys
+      if (e.key.toLowerCase() === 'h' || e.code === 'KeyH') {
+        sound.playButtonClick();
+        this.toggleHardMode();
+        return;
+      }
       if (e.key.toLowerCase() === 'v' || e.code === 'KeyV') {
         this.toggleAiVision();
         return;
@@ -702,12 +759,17 @@ export class GameEngine {
 
     // Enemy spawn
     const enemySpawn = { c: this.cols - 1, r: 0 };
+    const enemySpeed = this.hardMode 
+      ? Math.min(5.5, 4.6 + this.level * 0.1) 
+      : cfg.enemySpeed;
+    const defaultPause = this.hardMode ? 0 : cfg.pauseAtIntersection;
+
     this.enemy = {
       c: enemySpawn.c,
       r: enemySpawn.r,
       renderX: enemySpawn.c,
       renderY: enemySpawn.r,
-      speed: cfg.enemySpeed,
+      speed: enemySpeed,
       targetC: enemySpawn.c,
       targetR: enemySpawn.r,
       isMoving: false,
@@ -715,13 +777,14 @@ export class GameEngine {
       stunnedTimer: 0,
       rethinkTimer: 0,
       pauseAtIntersection: 0,
-      defaultPause: cfg.pauseAtIntersection
+      defaultPause: defaultPause
     };
 
     this.state = 'PLAYING';
     this.lastTime = performance.now();
     this.updateHUD();
     this.updateLevelSelectorActive();
+    this.updateHardModeUI();
     this.updateEnemyTactics();
   }
 
@@ -780,7 +843,7 @@ export class GameEngine {
   updateEnemyTactics() {
     if (!this.maze || !this.player || !this.enemy) return;
 
-    const depth = this.level >= 8 ? 4 : (this.level >= 4 ? 3 : 2);
+    const depth = this.hardMode ? 5 : (this.level >= 8 ? 4 : (this.level >= 4 ? 3 : 2));
 
     const decision = TacticalAI.decideTactic(
       this.maze,
@@ -791,7 +854,8 @@ export class GameEngine {
       this.timeLeft,
       this.level,
       this.exitCampTimer,
-      depth
+      depth,
+      this.hardMode
     );
 
     let target = decision.target;
@@ -914,6 +978,10 @@ export class GameEngine {
     if (this.enemy.stunnedTimer > 0) {
       const enemyScreen = this.gridToScreen(this.enemy.renderX, this.enemy.renderY);
       this.particles.emitStunSparks(enemyScreen.x, enemyScreen.y);
+    }
+    if (this.hardMode && this.enemy && this.enemy.isMoving && this.enemy.stunnedTimer <= 0 && Math.random() < 0.3) {
+      const enemyScreen = this.gridToScreen(this.enemy.renderX, this.enemy.renderY);
+      this.particles.emitHitSparks(enemyScreen.x, enemyScreen.y, '#ef4444', 2);
     }
 
     if (this.shakeDuration > 0) {
@@ -1079,7 +1147,9 @@ export class GameEngine {
       return;
     }
 
-    const rethinkInterval = this.level <= 2 ? 0.8 : (this.level <= 5 ? 0.6 : 0.4);
+    const rethinkInterval = this.hardMode 
+      ? 0.15 
+      : (this.level <= 2 ? 0.8 : (this.level <= 5 ? 0.6 : 0.4));
     e.rethinkTimer += dt;
     if (e.rethinkTimer >= rethinkInterval) {
       e.rethinkTimer = 0;
@@ -1096,7 +1166,7 @@ export class GameEngine {
         e.isMoving = false;
         e.moveProgress = 0;
 
-        if (e.defaultPause > 0) {
+        if (!this.hardMode && e.defaultPause > 0) {
           const passable = this.maze.getPassableNeighbors(e.c, e.r);
           if (passable.length > 2) {
             e.pauseAtIntersection = e.defaultPause;
@@ -1212,14 +1282,17 @@ export class GameEngine {
     const timeBonus = Math.floor(this.timeLeft * 50);
     const livesBonus = this.lives * 300;
     const levelClearBonus = this.level * 1000;
-    const totalLevelScore = timeBonus + livesBonus + levelClearBonus;
+    let totalLevelScore = timeBonus + livesBonus + levelClearBonus;
+    if (this.hardMode) {
+      totalLevelScore = Math.floor(totalLevelScore * 1.5);
+    }
     this.score += totalLevelScore;
 
     let rank = 'C LITTLE MOUSE';
-    if (this.timeLeft >= 40 && this.lives === 3) rank = 'S+ CHEESE MASTER';
-    else if (this.timeLeft >= 28) rank = 'S SLICK JERRY';
-    else if (this.timeLeft >= 15) rank = 'A FAST PAWS';
-    else if (this.timeLeft >= 5) rank = 'B ESCAPEE';
+    if (this.timeLeft >= 40 && this.lives === 3) rank = this.hardMode ? '🔥 S++ NIGHTMARE GOD' : 'S+ CHEESE MASTER';
+    else if (this.timeLeft >= 28) rank = this.hardMode ? '🔥 S NIGHTMARE SURVIVOR' : 'S SLICK JERRY';
+    else if (this.timeLeft >= 15) rank = this.hardMode ? '🔥 A SHADOW ESCAPEE' : 'A FAST PAWS';
+    else if (this.timeLeft >= 5) rank = this.hardMode ? '🔥 B LUCKY SURVIVOR' : 'B ESCAPEE';
 
     this.dom.rankBadgeVal.textContent = rank;
     this.dom.timeBonusWin.textContent = `+${timeBonus} (${Math.floor(this.timeLeft)}s left)`;
@@ -1729,6 +1802,19 @@ export class GameEngine {
     }
 
     ctx.translate(scr.x + shakeOffset, scr.y);
+
+    // Fiery Predator Aura in Hard Mode!
+    if (this.hardMode) {
+      const pulse = Math.sin(now * 8) * (sz * 0.06);
+      const fireGrad = ctx.createRadialGradient(0, 0, sz * 0.15, 0, 0, sz * 0.52 + pulse);
+      fireGrad.addColorStop(0, 'rgba(239, 68, 68, 0.55)');
+      fireGrad.addColorStop(0.5, 'rgba(249, 115, 22, 0.3)');
+      fireGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+      ctx.fillStyle = fireGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, sz * 0.52 + pulse, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     if (this.assets.tom && this.assets.tom.complete && this.assets.tom.naturalWidth > 0) {
       ctx.drawImage(this.assets.tom, -charSize / 2, -charSize / 2, charSize, charSize);

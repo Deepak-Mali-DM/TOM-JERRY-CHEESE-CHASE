@@ -27,8 +27,13 @@
         <div class="game-title">
           <img src="assets/logo.svg" alt="Tom &amp; Jerry: Cheese Chase Logo" class="brand-logo-img">
           <span class="badge">TACTICAL AI HUNT</span>
+          <span id="hard-mode-badge" class="badge badge-hard" style="display:none;">🔥 NIGHTMARE</span>
         </div>
         <div class="header-actions">
+          <button id="btn-hard-mode" class="btn-icon btn-hard-toggle" title="Toggle Hard Mode: Ultra-Fast &amp; Smart AI Hunter (Hotkey: H)">
+            <span class="mode-icon">🔥</span>
+            <span class="btn-text">HARD: <strong id="hard-mode-state">OFF</strong></span>
+          </button>
           <button id="btn-theme" class="btn-icon" title="Toggle Day / Night Garden" aria-label="Toggle Theme">
             <svg id="theme-icon-moon" class="svg-icon" viewBox="0 0 24 24" style="display:none;">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -273,6 +278,9 @@
         </div>
         <div class="footer-tip">
           <kbd class="key-pill">P</kbd> Pause
+        </div>
+        <div class="footer-tip">
+          <kbd class="key-pill">H</kbd> Hard Mode
         </div>
         <div class="footer-tip">
           <kbd class="key-pill">1-0</kbd> Jump Level

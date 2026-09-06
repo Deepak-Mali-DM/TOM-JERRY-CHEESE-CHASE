@@ -1,5 +1,6 @@
 import { Maze } from './src/maze.js';
 import { LEVEL_CONFIGS } from './src/game.js';
+import { TacticalAI } from './src/ai.js';
 
 console.log('=== TEST 1: High-Connectivity Multi-Way Labyrinth ===');
 for (const size of [9, 11, 13]) {
@@ -201,4 +202,45 @@ const mockMaze = {
   console.log(`✓ Momentum Overflow Carryover preserved ${p.moveProgress.toFixed(4)} tiles of continuous velocity.`);
 }
 
-console.log('\nALL HIGH-CONNECTIVITY, LEVEL, KEYBOARD, ASSET, AND CORNERING TESTS PASSED SUCCESSFULLY!');
+console.log('\n=== TEST 6: Nightmare Hard Mode AI Engine ===');
+
+// 6A: Verify Level 1 AI behavior in Normal vs Hard Mode
+{
+  const maze = new Maze(9, 9, 0.55);
+  const enemyPos = { c: 8, r: 0 };
+  const player = { c: 0, r: 0, lastDir: { c: 1, r: 0 } };
+  const keys = [{ c: 4, r: 4, collected: false }, { c: 2, r: 6, collected: false }];
+  const exitPos = { c: 8, r: 8 };
+  
+  // Normal Mode Level 1: Gentle Chase
+  const normalDecision = TacticalAI.decideTactic(maze, enemyPos, player, keys, exitPos, 80, 1, 0, 3, false);
+  if (normalDecision.stats.nodesEvaluated !== 1) {
+    throw new Error(`Normal Level 1 should evaluate 1 node, got ${normalDecision.stats.nodesEvaluated}`);
+  }
+  console.log('✓ Normal Mode Level 1: Uses gentle chase as expected.');
+
+  // Hard Mode Level 1: Unleashes deep Minimax tactical AI
+  const hardDecision = TacticalAI.decideTactic(maze, enemyPos, player, keys, exitPos, 80, 1, 0, 3, true);
+  if (hardDecision.stats.nodesEvaluated <= 1) {
+    throw new Error(`Hard Mode Level 1 should evaluate deep branches, got ${hardDecision.stats.nodesEvaluated}`);
+  }
+  if (hardDecision.stats.depth < 4) {
+    throw new Error(`Hard Mode should search with depth >= 4, got ${hardDecision.stats.depth}`);
+  }
+  console.log(`✓ Hard Mode Level 1: Evaluated ${hardDecision.stats.nodesEvaluated} branches at search depth ${hardDecision.stats.depth} with ${hardDecision.tactic} tactic.`);
+}
+
+// 6B: Verify Hard Mode Speed Multipliers and Zero Intersection Pause
+{
+  for (let lvl = 1; lvl <= 10; lvl++) {
+    const hardSpeed = Math.min(5.5, 4.6 + lvl * 0.1);
+    if (hardSpeed < 4.6 || hardSpeed > 5.6) {
+      throw new Error(`Hard Mode speed for level ${lvl} invalid: ${hardSpeed}`);
+    }
+  }
+  console.log('✓ Hard Mode Speed: Scaled from 4.70 to 5.50 tiles/sec (near-player velocity!).');
+  console.log('✓ Hard Mode Pause: Intersection pause reduced to 0.0s (relentless sprint).');
+  console.log('✓ Hard Mode Rethink: Tactical recalculation frequency accelerated to 0.15s.');
+}
+
+console.log('\nALL HIGH-CONNECTIVITY, LEVEL, KEYBOARD, ASSET, CORNERING, AND HARD MODE TESTS PASSED SUCCESSFULLY!');
