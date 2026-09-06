@@ -1,7 +1,7 @@
 {
-  "name": "one-minute-maze",
+  "name": "tom-jerry-cheese-chase",
   "version": "1.0.0",
-  "description": "One Minute Maze - Tactical AI Procedural Maze Game",
+  "description": "Tom & Jerry: Cheese Chase - Cartoon Garden Maze Game",
   "type": "module",
   "scripts": {
     "test": "node test_verification.js"

@@ -1,0 +1,3 @@
+# Ignore local development server and test scripts on Vercel
+server.js
+test_verification.js
